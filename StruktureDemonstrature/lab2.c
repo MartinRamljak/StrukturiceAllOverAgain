@@ -3,148 +3,228 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct _osoba* pozicija;
-typedef struct _osoba 
+#define MAX_LENGTH (50)
+
+struct _Person;
+typedef struct _Person* Position;
+typedef struct _Person
 {
-	char ime[20];
-	char prezime[20];
-	int godinaRodenja;
-	pozicija next;
-} osoba;
+	char name[MAX_LENGTH];
+	char surname[MAX_LENGTH];
+	int birthYear;
+	Position next;
+} Person;
 
-int DodajNaPocetak(pozicija head);
-int DodajNaKraj(pozicija head);
-int Ispis(pozicija prvi);
-int PronadiOsobu(pozicija head);
-int IzbrisiOsobu(pozicija head);
-int main()
+int AppendList(Position head);
+int AddToEndOfList(Position head);
+int PrintList(Position first);
+int FindPerson(Position head);
+int DeletePerson(Position head);
+Position CreatePerson();
+Position FindLast(Position head);
+int PrintPerson(Position person);
+int Menu(Position head);
+char* WishedSurname();
+
+int main(int argc, char** argv)
 {
-	osoba Head;
-	Head.next = NULL;
-	int broj = 0;
-	int uspjesnostFunkcije = 0;
+	Person Head = { .next = NULL, .name = {0},
+				.surname = {0}, .birthYear = 0 };
+	Menu(&Head);
 
-	for (broj; broj < 1; broj++)
-	{
-		DodajNaKraj(&Head);
-		DodajNaPocetak(&Head);
-	}
-	Ispis(Head.next);
-	IzbrisiOsobu(&Head);
-	Ispis(Head.next);
-	while (PronadiOsobu(&Head) == -1)
-		PronadiOsobu(&Head);
 
-	return 0;
+	return EXIT_SUCCESS;
 }
 
-int DodajNaPocetak(pozicija head)
+Position CreatePerson()
 {
-	pozicija novi = NULL;
+	Position newPerson = NULL;
+	char name[MAX_LENGTH] = { 0 };
+	char surname[MAX_LENGTH] = { 0 };
+	int birthYear = 0;
 
-	novi = (pozicija)malloc(sizeof(osoba));
-	if (!novi)
+	newPerson = (Position)malloc(sizeof(Person));
+	if (!newPerson)
 	{
-		printf("Neuspjesna alokacija memorije!\n");
-		return -1;
+		perror("Can't allocate memory!\n");
+		return NULL;
 	}
 
-	printf("Unesi ime nove osobe: \n");
-	scanf(" %s", novi->ime);
-	printf("Unesi prezime nove osobe: \n");
-	scanf(" %s", novi->prezime);
-	printf("Unesi godinu rodenja nove osobe: \n");
-	scanf("%d", &novi->godinaRodenja);
+	printf("Enter name:\n");
+	scanf(" %s", name);
+	printf("Enter surname:\n");
+	scanf(" %s", surname);
+	printf("Enter birth year:\n");
+	scanf(" %d", &birthYear);
 
-	novi->next = head->next;
-	head->next = novi;
 
-	return 0;
+	strcpy(newPerson->name, name);
+	strcpy(newPerson->surname, surname);
+	newPerson->birthYear = birthYear;
+
+	return newPerson;
 }
 
-int DodajNaKraj(pozicija head)
+int AppendList(Position head)
+{
+	Position newPerson = NULL;
+
+	newPerson = CreatePerson();
+
+	if (newPerson)
+	{
+		newPerson->next = head->next;
+		head->next = newPerson;
+	}
+
+	return EXIT_SUCCESS;
+}
+
+Position FindLast(Position head)
 {
 	while (head->next != NULL)
-		head = head->next;
-
-	pozicija novi = NULL;
-
-	novi = (pozicija)malloc(sizeof(osoba));
-	if (!novi)
 	{
-		printf("Neuspjesna alokacija memorije!\n");
-		return -1;
+		head = head->next;
 	}
 
-	printf("Unesi ime nove osobe: \n");
-	scanf(" %s", novi->ime);
-	printf("Unesi prezime nove osobe: \n");
-	scanf(" %s", novi->prezime);
-	printf("Unesi godinu rodenja nove osobe: \n");
-	scanf("%d", &novi->godinaRodenja);
-
-	
-
-	novi->next = head->next;
-	head->next = novi;
-
-	return 0;
+	return head;
 }
 
-int Ispis(pozicija prvi)
+int AddToEndOfList(Position head)
 {
-		while (prvi)
-		{
-			printf("Ime osobe: %s\t Prezime osobe: %s\t Godina rodenja: %d\t\n", prvi->ime, prvi->prezime, prvi->godinaRodenja);
-			prvi = prvi->next;
-		}
+	Position newPerson = NULL;
 
-	return 0;
+	newPerson = CreatePerson();
+
+	if (newPerson)
+	{
+		head = FindLast(head);
+		newPerson->next = head->next;
+		head->next = newPerson;
+	}
+
+	return EXIT_SUCCESS;
 }
 
-int PronadiOsobu(pozicija head)
+int PrintList(Position first)
 {
-	char prezime[20] = { 0 };
+	if (!first)
+	{
+		perror("Empty list!\n");
+	}
+	for (; first != NULL; first = first->next)
+	{
+		printf("Name: %s\t Surname: %s\t Birth year: %d\t\n", first->name, first->surname, first->birthYear);
+	}
 
-	printf("Unesi prezime osobe koju zelis pronaci:\n");
-	scanf(" %s", prezime);
+	return EXIT_SUCCESS;
+}
 
-	while (head->next && strcmp(head->next->prezime, prezime) != 0)
-		head = head->next;
+int FindPerson(Position head)
+{
 	if (head->next)
-		printf("Osoba je: %s, a njezina adresa je: %p\n", head->next->ime, head->next);
+	{
+		while (head->next && strcmp(head->next->surname, WishedSurname()) != 0)
+		{
+			head = head->next;
+		}
+		if (head->next)
+		{
+			PrintPerson(head->next);
+		}
+		else
+		{
+			perror("Can't find person with that surname!\n");
+			return -1;
+		}
+	}
 	else
 	{
-		printf("Ne postoji osoba pod tim prezimenom!\n");
-		return -1;
+		perror("Empty list!\n");
 	}
 
-		return 0;
+	return EXIT_SUCCESS;
 }
-int IzbrisiOsobu(pozicija head)
+int DeletePerson(Position head)
 {
-	char prezime[20] = { 0 };
-	pozicija prethodni = NULL;
-
-	printf("Unesi prezime osobe koju zelis izbrisati:\n");
-	scanf(" %s", prezime);
-
-	while (head->next && strcmp(head->prezime, prezime) != 0)
+	if (head->next)
 	{
-		prethodni = head;
-		head = head->next;
-	}
-	if (prethodni->next && strcmp(head->prezime, prezime) == 0)
-	{
-		printf("Osoba je: %s, a njezina adresa je: %p i sad je brisemo!\n", head->ime, head);
-		prethodni->next = head->next;
-		free(head);
+		Position previous = NULL;
+
+		while (head->next && strcmp(head->surname, WishedSurname()) != 0)
+		{
+			previous = head;
+			head = head->next;
+		}
+		if (previous->next && strcmp(head->surname, WishedSurname()) == 0)
+		{
+			PrintPerson(head);
+			previous->next = head->next;
+			free(head);
+			printf("Deleted!\n");
+		}
+		else
+		{
+			perror("Can't find person with that surname!\n");
+			return -1;
+		}
 	}
 	else
 	{
-		printf("Ne postoji osoba pod tim prezimenom!\n");
-		return -1;
+		perror("Empty list!\n");
 	}
 
-	return 0;
+	return EXIT_SUCCESS;
 }
+
+int PrintPerson(Position person)
+{
+	printf("Name: %s, surname: %s, birth year: %d, adress: %p\n",
+		person->name, person->surname, person->birthYear, person);
+
+	return EXIT_SUCCESS;
+}
+
+int Menu(Position Head)
+{
+	char choice = '\0';
+	while (1) {
+		printf("Enter A(Append list), E(Put at the end of list), P(Print list), S(Search), D(Delete), X(Exit)\n");
+		scanf(" %c", &choice);
+		if (choice == 'A')
+			AppendList(Head);
+		else if (choice == 'E')
+			AddToEndOfList(Head);
+		else if (choice == 'P')
+			PrintList(Head->next);
+		else if (choice == 'S')
+		{
+			while (FindPerson(Head) == -1)
+			{
+				FindPerson(Head);
+			}
+		}
+		else if (choice == 'D')
+		{
+			while (DeletePerson(Head) == -1)
+			{
+				DeletePerson(Head);
+			}
+		}
+		else if (choice == 'X')
+			break;
+		else
+			perror("Wrong letter!\n");
+	}
+	return EXIT_SUCCESS;
+}
+
+char* WishedSurname()
+{
+	char surname[MAX_LENGTH] = { 0 };
+	printf("Enter surname of the wanted person:\n");
+	scanf(" %s", surname);
+
+	return surname;
+}
+
