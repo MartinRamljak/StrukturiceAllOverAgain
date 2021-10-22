@@ -141,6 +141,7 @@
   <ItemGroup>
     <ClCompile Include="lab1.c" />
     <ClCompile Include="lab2.c" />
+    <ClCompile Include="lab2saSata.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
