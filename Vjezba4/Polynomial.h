@@ -26,5 +26,6 @@ int CreateAndInsertAfter(int coefficient, int exponent, Position position);
 int AddPoly1(Position resultHead, Position head1, Position head2);
 int AddPoly2(Position resultHead, Position head1, Position head2);
 int MultiplyPoly(Position resultHead, Position head1, Position head2);
+int FreeMemory(Position head);
 
 #endif // !POLYNOMIAL_H

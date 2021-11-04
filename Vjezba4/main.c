@@ -23,6 +23,11 @@ int main(int argc, char** argv)
 
 		PrintPoly("pAdd", resultAdd.next);
 		PrintPoly("pMult", resultMult.next);
+
+		FreeMemory(&head1);
+		FreeMemory(&head2);
+		FreeMemory(&resultAdd);
+		FreeMemory(&resultMult);
 	}
 
 	return EXIT_SUCCESS;

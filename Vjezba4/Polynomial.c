@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
 
 int FillOutFileName(char* fileName)
 {
@@ -319,5 +320,16 @@ int MultiplyPoly(Position resultHead, Position head1, Position head2)
 			InsertSorted(resultHead, newElement);
 		}
 	}
+	return EXIT_SUCCESS;
+}
+int FreeMemory(Position head)
+{
+	Position temp = head;
+
+	while (temp->next)
+	{
+		DeleteAfter(temp);
+	}
+	
 	return EXIT_SUCCESS;
 }
